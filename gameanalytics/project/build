@@ -1,0 +1,28 @@
+# Remove built - material if it was run before
+rm -rf obj
+rm -rf ../ndll
+mkdir ../ndll
+# MacOSX Paths
+# Stencyl Application Directory -> Downloads/ in my case
+# export NEKOLPATH=/Users/admin/Downloads/plaf/neko-mac
+# export NEKOPATH=/Users/admin/Downloads/plaf/neko-mac
+# export HAXEPATH=/Users/admin/Downloads/plaf/haxe-bin/mac
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NEKOLPATH:$HAXEPATH
+# export DYLD_LIBRARY_PATH=$NEKOLPATH:$HAXEPATH
+# export PATH=$PATH:$NEKOPATH:$HAXEPATH
+# setup the path with all the libraries (openfl,lime)
+# haxelib setup /Users/admin/Downloads/plaf/haxe/lib
+
+## iPhone
+haxelib run hxcpp Build.xml -Diphoneos
+haxelib run hxcpp Build.xml -Diphoneos -DHXCPP_ARMV7
+haxelib run hxcpp Build.xml -Diphoneos -DHXCPP_ARM64
+haxelib run hxcpp Build.xml -Diphonesim
+# Macintosh Native
+# haxelib run hxcpp Build.xml -DHXCPP_M64
+
+#// replace only the changed file in the game .. so that you don't need to rebuild the project over and over again
+# cp /Users/admin/stencylworks/engine-extensions/ga/ndll/iPhone/libSayGA.iphoneos-64.a /Users/admin/stencylworks/engine-extensions/GA/ndll/iPhone/libSayGA.iphoneos.a
+# cp /Users/admin/stencylworks/engine-extensions/ga/ndll/iPhone/libSayGA.iphoneos.a /Users/admin/stencylworks/games-generated/GA/Export/ios/GPS/lib/arm64/libSayGA.a
+
+# ls -ltrali /Users/admin/stencylworks/games-generated/GA/Export/ios/GA/lib/arm64/libSayGA.a

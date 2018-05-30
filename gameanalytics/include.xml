@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+
+	<!--IOS-->
+	<section if="ios">
+		<ndll name="gameanalytics"/>
+		<dependency path="frameworks/GameAnalytics.framework"/>
+	</section>
+
+	<!--ANDROID-->
+	<section if="android">
+		<android extension="com.gameanalytics.MyGameAnalytics"/>
+		<classpath name="src" />
+		<dependency name="gameanalytics" path="dependencies/gameanalytics"/>
+	</section>
+
+</project>

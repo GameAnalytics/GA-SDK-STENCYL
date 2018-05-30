@@ -1,0 +1,6 @@
+name=GameAnalytics
+description=Free analytics built for games, designed to help you grow
+author=Cristian Bercu
+website=https://gameanalytics.com/
+version=1.0.0
+compatibility=all
