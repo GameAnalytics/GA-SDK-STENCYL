@@ -20,5 +20,8 @@ Documentation can be found [here](https://gameanalytics.com/docs/stencyl-sdk).
 Changelog
 ---------
 <!--(CHANGELOG_TOP)-->
+**1.0.1**
+* fixed compilation issue (iOS)
+
 **1.0.0**
 * initial release

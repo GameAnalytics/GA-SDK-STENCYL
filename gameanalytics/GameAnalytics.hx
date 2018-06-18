@@ -18,7 +18,7 @@ import lime.system.JNI;
 
 class GameAnalytics {
   //versioning
-  private static inline var sdk_version:String = "1.0.0"; //GameAnalytics SDK version
+  private static inline var sdk_version:String = "1.0.1"; //GameAnalytics SDK version
 
   //Settings cache
   private static var gameKey:String;
@@ -376,11 +376,11 @@ class GameAnalytics {
   private static function setCustomDim01()
   {
   #if(cpp && mobile && !android)
-  setCustomDimension01GA(customDim);
+  setCustomDimension01GA(customDimension);
   #end
   #if android
   setCustomDimension01GA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "setCustomDimension01", "(Ljava/lang/String;)V", true);
-  setCustomDimension01GA([customDim]);
+  setCustomDimension01GA([customDimension]);
   #end
   }
 
@@ -393,11 +393,11 @@ class GameAnalytics {
   private static function setCustomDim02()
   {
   #if(cpp && mobile && !android)
-  setCustomDimension02GA(customDim);
+  setCustomDimension02GA(customDimension);
   #end
   #if android
   setCustomDimension02GA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "setCustomDimension02", "(Ljava/lang/String;)V", true);
-  setCustomDimension02GA([customDim]);
+  setCustomDimension02GA([customDimension]);
   #end
   }
 
@@ -410,11 +410,11 @@ class GameAnalytics {
   private static function setCustomDim03()
   {
   #if(cpp && mobile && !android)
-  setCustomDimension03GA(customDim);
+  setCustomDimension03GA(customDimension);
   #end
   #if android
   setCustomDimension03GA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "setCustomDimension03", "(Ljava/lang/String;)V", true);
-  setCustomDimension03GA([customDim]);
+  setCustomDimension03GA([customDimension]);
   #end
   }
 
