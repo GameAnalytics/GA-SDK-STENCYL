@@ -20,6 +20,9 @@ Documentation can be found [here](https://gameanalytics.com/docs/stencyl-sdk).
 Changelog
 ---------
 <!--(CHANGELOG_TOP)-->
+**2.0.0**
+* added Command Center functionality
+
 **1.0.1**
 * fixed compilation issue (iOS)
 

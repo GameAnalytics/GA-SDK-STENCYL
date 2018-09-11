@@ -250,6 +250,29 @@ namespace gameanalytics
       [GameAnalytics endSession];
     }
 
+    //Command centre
+    bool isCommandCenterReady()
+    {
+      return [GameAnalytics isCommandCenterReady];
+    }
+
+    const char* getCommandCenterValueAsString(const char *key)
+    {
+      NSString* _key = [[NSString alloc] initWithUTF8String:key];
+      NSString* value = [GameAnalytics getCommandCenterValueAsString:_key];
+      const char* ret = [value UTF8String];
+      return ret;
+    }
+
+    const char* getCommandCenterValueAsStringWithDefVal(const char *key, const char *defValue)
+    {
+      NSString* _key = [[NSString alloc] initWithUTF8String:key];
+      NSString* _defValue = [[NSString alloc] initWithUTF8String:defValue];
+      NSString* value = [GameAnalytics getCommandCenterValueAsString:_key defaultValue:_defValue];
+      const char* ret = [value UTF8String];
+      return ret;
+    }
+
     //State
     void configureSdkVersion(const char *version)
     {
@@ -264,7 +287,12 @@ namespace gameanalytics
     }
 
     //Utility
-    void printNative(const char *message)
+    void printNative(const char* message)
+    {
+      NSLog(@"%@", [[NSString alloc]
+                           initWithUTF8String:message]);
+    }
+    void printNative(char *message)
     {
       NSLog(@"%@", [[NSString alloc]
                            initWithUTF8String:message]);

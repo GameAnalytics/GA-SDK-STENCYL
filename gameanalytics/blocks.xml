@@ -238,4 +238,21 @@
 <block tag="end-session-gameanalytics" spec="End session GameAnalytics" code="GameAnalytics.endSession();" type="action" color="charcoal" help="This can be used only if manual session handling is enabled (not recommended)." returns="void">
 </block>
 
+<!-- Command Center -->
+<block tag="is-command-center-ready-gameanalytics" spec="Is Command Center ready GameAnalytics" code="GameAnalytics.isCommandCenterReady()" type="normal" color="charcoal" help="Check if the Command Center has finished fetching the remote configs from GameAnalytics" returns="boolean">
+</block>
+
+<block tag="get-command-center-value-gameanalytics" spec="Get Command Center value GameAnalytics with key: %0" code="GameAnalytics.getCommandCenterValueAsString(~)" type="normal" color="charcoal" help="Retrieve a remote config by key from GameAnalytics. Check if Command Center is ready when using." returns="text">
+	<fields>
+		<text order="0"></text>
+	</fields>
+</block>
+
+<block tag="get-command-center-value-with-default-value-gameanalytics" spec="Get Command Center value GameAnalytics with key: %0 and default value: %1" code="GameAnalytics.getCommandCenterValueAsStringWithDefVal(~,~)" type="normal" color="charcoal" help="Retrieve a remote config by key from GameAnalytics. If there is no config for the given key, the default value is returned. Check if Command Center is ready when using." returns="text">
+	<fields>
+		<text order="0"></text>
+		<text order="1"></text>
+	</fields>
+</block>
+
 </palette>

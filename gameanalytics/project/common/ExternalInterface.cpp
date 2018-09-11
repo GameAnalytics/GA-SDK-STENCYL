@@ -205,6 +205,25 @@ void endSessionGA()
 }
 DEFINE_PRIM(endSessionGA,0);
 
+//Command centre
+static value isCommandCenterReadyGA()
+{
+	return (isCommandCenterReady() ? val_true : val_false);
+}
+DEFINE_PRIM(isCommandCenterReadyGA,0);
+
+static value getCommandCenterValueAsStringGA(value key)
+{
+	return alloc_string(getCommandCenterValueAsString(val_string(key)));
+}
+DEFINE_PRIM(getCommandCenterValueAsStringGA,1);
+
+static value getCommandCenterValueAsStringWithDefValGA(value key, value defaultValue)
+{
+	return alloc_string(getCommandCenterValueAsStringWithDefVal(val_string(key), val_string(defaultValue)));
+}
+DEFINE_PRIM(getCommandCenterValueAsStringWithDefValGA,2);
+
 //Utility
 void printGA(value message)
 {

@@ -36,6 +36,20 @@ import android.widget.RelativeLayout;
 
 public class MyGameAnalytics extends Extension
 {
+  private static MyGameAnalytics instance = null;
+
+  private static boolean isCCready = false;
+  private static String configValue = "Nothing";
+  private static String configDefaultValue = "";
+
+  static public MyGameAnalytics getInstance()
+  {
+    if(instance == null)
+    {
+      instance = new MyGameAnalytics();
+    }
+    return instance;
+  }
 
   public static void initialise(final String gameKey, final String secretKey)
   {
@@ -196,6 +210,48 @@ public class MyGameAnalytics extends Extension
         public void run()
         {
           GameAnalytics.configureAvailableCustomDimensions03(dimensions03);
+        }
+      }
+    );
+  }
+
+  public static void setCustomDimension01(final String dimension)
+  {
+    mainActivity.runOnUiThread
+    (
+      new Runnable()
+      {
+        public void run()
+        {
+          GameAnalytics.setCustomDimension01(dimension);
+        }
+      }
+    );
+  }
+
+  public static void setCustomDimension02(final String dimension)
+  {
+    mainActivity.runOnUiThread
+    (
+      new Runnable()
+      {
+        public void run()
+        {
+          GameAnalytics.setCustomDimension02(dimension);
+        }
+      }
+    );
+  }
+
+  public static void setCustomDimension03(final String dimension)
+  {
+    mainActivity.runOnUiThread
+    (
+      new Runnable()
+      {
+        public void run()
+        {
+          GameAnalytics.setCustomDimension03(dimension);
         }
       }
     );
@@ -421,5 +477,59 @@ public class MyGameAnalytics extends Extension
         }
       }
     );
+  }
+
+  //Command center
+  static public void isCommandCenterReady()
+  {
+    mainActivity.runOnUiThread
+    (
+      new Runnable()
+      {
+        public void run()
+        {
+          isCCready = GameAnalytics.isCommandCenterReady();
+        }
+      }
+    );
+  }
+
+  static public boolean getIsCommandCenterReady()
+  {
+    return isCCready;
+  }
+
+
+  static public void getCommandCenterValueAsString(final String key)
+  {
+    mainActivity.runOnUiThread
+    (
+      new Runnable()
+      {
+        public void run()
+        {
+          configValue = GameAnalytics.getCommandCenterValueAsString(key);
+        }
+      }
+    );
+  }
+
+  static public void getCommandCenterValueAsStringWithDefVal(final String key, final String defValue)
+  {
+    mainActivity.runOnUiThread
+    (
+      new Runnable()
+      {
+        public void run()
+        {
+          configValue = GameAnalytics.getCommandCenterValueAsString(key, defValue);
+        }
+      }
+    );
+  }
+
+  static public String getFetchedConfigValue()
+  {
+    return configValue;
   }
 }

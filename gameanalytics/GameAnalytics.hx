@@ -2,6 +2,7 @@ package;
 
 #if cpp
         import cpp.Lib;
+        import Type;
 #elseif neko
         import neko.Lib;
 #else
@@ -18,7 +19,7 @@ import lime.system.JNI;
 
 class GameAnalytics {
   //versioning
-  private static inline var sdk_version:String = "1.0.1"; //GameAnalytics SDK version
+  private static inline var sdk_version:String = "2.0.0"; //GameAnalytics SDK version
 
   //Settings cache
   private static var gameKey:String;
@@ -65,6 +66,11 @@ class GameAnalytics {
   //error
   private static var severity:Int;
   private static var message:String;
+  //CC
+  private static var ready:Bool = false;
+  private static var configKey:String;
+  private static var configDefaultValue:String;
+  private static var configValue:String;
 
         #if ios
                 private static var initGA = Lib.load("gameanalytics", "initGA", 2);
@@ -102,10 +108,13 @@ class GameAnalytics {
                 private static var startSessionGA = Lib.load("gameanalytics","startSessionGA",0);
                 private static var endSessionGA = Lib.load("gameanalytics","endSessionGA",0);
 
+                //Command Centre
+                private static var isCommandCenterReadyGA = Lib.load("gameanalytics","isCommandCenterReadyGA",0);
+                private static var getCommandCenterValueAsStringGA = Lib.load("gameanalytics","getCommandCenterValueAsStringGA",1);
+                private static var getCommandCenterValueAsStringWithDefValGA = Lib.load("gameanalytics","getCommandCenterValueAsStringWithDefValGA",2);
+
                 //utility
                 private static var printGA = Lib.load("gameanalytics","printGA",1);
-
-
 
         #end
                 #if android
@@ -141,6 +150,13 @@ class GameAnalytics {
                 private static var setEnabledManualSessionHandlingGA:Dynamic;
                 private static var startSessionGA:Dynamic;
                 private static var endSessionGA:Dynamic;
+
+                //Command center
+                private static var isCommandCenterReadyGA:Dynamic;
+                private static var getIsCommandCenterReadyGA:Dynamic;
+                private static var getCommandCenterValueAsStringGA:Dynamic;
+                private static var getCommandCenterValueAsStringWithDefValGA:Dynamic;
+                private static var getFetchedConfigValueGA:Dynamic;
                 #end
                 #if cpp
                 #end
@@ -696,6 +712,86 @@ class GameAnalytics {
   endSessionGA();
   #end
   }
+
+  //Command Centre
+  public static function isCommandCenterReady()
+  {
+  #if(cpp && mobile && !android)
+  ready = isCommandCenterReadyGA();
+  #end
+  #if android
+  if(isCommandCenterReadyGA == null)
+  {
+  isCommandCenterReadyGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "isCommandCenterReady", "()V");
+  getIsCommandCenterReadyGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "getIsCommandCenterReady", "()Z");
+  }
+  isCommandCenterReadyGA();
+  Sys.sleep(.05); // threads are parallel and we need to wait for UI thread in Android to finish the check
+  ready = getIsCommandCenterReadyGA();
+  #end
+  return ready;
+  }
+
+  public static function getCommandCenterValueAsString(_key:String)
+  {
+  GameAnalytics.configKey = _key;
+  configValue = _getCommandCenterValueAsString();
+  return configValue;
+  }
+
+  private static function _getCommandCenterValueAsString()
+  {
+  var ret:String = "";
+  #if(cpp && mobile && !android)
+  ret = getCommandCenterValueAsStringGA(GameAnalytics.configKey);
+  #end
+  #if android
+  if(getCommandCenterValueAsStringGA == null)
+  {
+  getCommandCenterValueAsStringGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics","getCommandCenterValueAsString","(Ljava/lang/String;)V");
+  }
+  if(getFetchedConfigValueGA == null)
+  {
+  getFetchedConfigValueGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics","getFetchedConfigValue","()Ljava/lang/String;");
+  }
+  getCommandCenterValueAsStringGA(GameAnalytics.configKey);
+  Sys.sleep(.05); // threads are parallel and we need to wait for UI thread in Android to finish loading the config value
+  ret = getFetchedConfigValueGA();
+  trace(ret);
+  #end
+  return ret;
+  }
+
+  public static function getCommandCenterValueAsStringWithDefVal(_key:String, _defaultValue:String)
+  {
+  GameAnalytics.configKey = _key;
+  GameAnalytics.configDefaultValue = _defaultValue;
+  configValue = _getCommandCenterValueAsStringWithDefVal();
+  return configValue;
+  }
+
+  private static function _getCommandCenterValueAsStringWithDefVal()
+  {
+  var ret:String = "";
+  #if(cpp && mobile && !android)
+  ret = getCommandCenterValueAsStringWithDefValGA(GameAnalytics.configKey,GameAnalytics.configDefaultValue);
+  #end
+  #if android
+  if(getCommandCenterValueAsStringWithDefValGA == null)
+  {
+  getCommandCenterValueAsStringWithDefValGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics","getCommandCenterValueAsStringWithDefVal","(Ljava/lang/String;Ljava/lang/String;)V");
+  }
+  if(getFetchedConfigValueGA == null)
+  {
+  getFetchedConfigValueGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics","getFetchedConfigValue","()Ljava/lang/String;");
+  }
+  getCommandCenterValueAsStringWithDefValGA(GameAnalytics.configKey, GameAnalytics.configDefaultValue);
+  Sys.sleep(.05); // threads are parallel and we need to wait for UI thread in Android to finish loading the config value
+  ret = getFetchedConfigValueGA();
+  #end
+  return ret;
+  }
+
 
   //Utility
   private static function printMessage(message:String)

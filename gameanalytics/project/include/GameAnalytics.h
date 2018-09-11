@@ -41,6 +41,11 @@ namespace gameanalytics
     void startSession();
     void endSession();
 
+    //Command Centre
+    bool isCommandCenterReady();
+    const char* getCommandCenterValueAsString(const char *key);
+    const char* getCommandCenterValueAsStringWithDefVal(const char *key, const char *defValue);
+
     //Utility
     void printNative(const char* message);
     void printNative(int message);
