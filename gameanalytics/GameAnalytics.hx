@@ -19,7 +19,7 @@ import lime.system.JNI;
 
 class GameAnalytics {
   //versioning
-  private static inline var sdk_version:String = "2.0.0"; //GameAnalytics SDK version
+  private static inline var sdk_version:String = "2.1.0"; //GameAnalytics SDK version
 
   //Settings cache
   private static var gameKey:String;
