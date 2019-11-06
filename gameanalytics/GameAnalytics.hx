@@ -664,7 +664,7 @@ class GameAnalytics {
   engineVersion = "stencyl 3.5.0";
   #elseif ((openfl >= "3.3.8") && (openfl < "4.0.0"))
   engineVersion = "stencyl 3.4.0";
-  #elseif ((openfl >= 3.3.2) && (openfl < "3.3.8"))
+  #elseif ((openfl >= "3.3.2") && (openfl < "3.3.8"))
   engineVersion = "stencyl 3.3.2";
   #else
   engineVersion = "stencyl 3.2.0";
