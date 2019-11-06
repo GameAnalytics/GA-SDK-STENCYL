@@ -1,4 +1,4 @@
-package;
+package extension.ga;
 
 #if cpp
         import cpp.Lib;
