@@ -11,11 +11,18 @@ package extension.ga;
         #end
 #end
 
+
 #if openfl_legacy
 import openfl.utils.JNI;
 #else
 import lime.system.JNI;
 #end
+
+#if html5
+import extension.ga.js.GameAnalyticsJS;
+#end
+
+import extension.ga.GADef;
 
 class GameAnalytics {
   //versioning
@@ -117,7 +124,7 @@ class GameAnalytics {
                 private static var printGA = Lib.load("gameanalytics","printGA",1);
 
         #end
-                #if android
+        #if android
                 private static var initGA:Dynamic;
                 private static var enableVerboseGA:Dynamic;
                 private static var enableInfoGA:Dynamic;
@@ -157,25 +164,24 @@ class GameAnalytics {
                 private static var getCommandCenterValueAsStringGA:Dynamic;
                 private static var getCommandCenterValueAsStringWithDefValGA:Dynamic;
                 private static var getFetchedConfigValueGA:Dynamic;
-                #end
-                #if cpp
-                #end
-                #if mac
+          #end
+          #if cpp
+          #end
+          #if mac
+          #end
 
-                #end
-
-  public static function initialiseiOS(gameKey:String, secretKey:String)
+  public static function initialise(gameKey:String, secretKey:String)
   {
     GameAnalytics.gameKey = gameKey;
     GameAnalytics.secretKey = secretKey;
-    initialiseWithGameKeyiOS();
-  }
 
-  public static function initialiseAndroid(gameKey:String, secretKey:String)
-  {
-    GameAnalytics.gameKey = gameKey;
-    GameAnalytics.secretKey = secretKey;
-    initialiseWithGameKeyAndroid();
+    #if android
+      initialiseWithGameKeyAndroid();
+    #elseif (cpp && mobile && !android)
+      initialiseWithGameKeyiOS();
+    #elseif html5
+      initialiseWithGameKeyJS();
+    #end
   }
 
   private static function initialiseWithGameKeyiOS()
@@ -203,6 +209,15 @@ class GameAnalytics {
     #end
   }
 
+  private static function initialiseWithGameKeyJS()
+  {
+    #if(html5)
+        GameAnalyticsJS.GameAnalytics("initialize",
+            "1f50637264c54a0bd15a11ba2beaf9d9",
+            "fedfbf1bf8bfac55d4d86d1ede81f84c91901a5f");
+    #end    
+  } 
+
   public static function enableVerbose(enableVerboseB:Bool)
   {
     GameAnalytics.enableVerboseB = enableVerboseB;
@@ -224,6 +239,9 @@ class GameAnalytics {
     {
     enableVerboseGA(["false"]);
     }
+    #end
+    #if(html5)
+    GameAnalyticsJS.GameAnalytics("enableVerbose",enableVerboseB);
     #end
   }
 
@@ -249,8 +267,8 @@ class GameAnalytics {
   enableInfoGA(["false"]);
   }
   #end
-  #if mac
-  trace("We are on mac!");
+  #if(html5)
+  GameAnalyticsJS.GameAnalytics("enableInfo",enableInfoB);
   #end
   }
 
@@ -583,33 +601,21 @@ class GameAnalytics {
   #end
   }
 
-  public static function sendProgressionEventWithOneProgressions(status:Int, progression01:String, score:Int)
+  public static function sendProgressionEvent(status:GAProgression, progression01:String, ?progression02:String, ?progression03:String, score:Int=0)
   {
-  GameAnalytics.status = status;
-  GameAnalytics.progression01 = progression01;
-  GameAnalytics.progression02 = GameAnalytics.progression03 = "empty";
-  GameAnalytics.score = score;
-  progressionEvent();
-  }
+    GameAnalytics.status = cast status; // Cast to Int
+    GameAnalytics.progression01 = progression01;
 
-  public static function sendProgressionEventWithTwoProgressions(status:Int, progression01:String, progression02:String, score:Int)
-  {
-  GameAnalytics.status = status;
-  GameAnalytics.progression01 = progression01;
-  GameAnalytics.progression02 = progression02;
-  GameAnalytics.progression03 = "empty";
-  GameAnalytics.score = score;
-  progressionEvent();
-  }
+#if html5
+    GameAnalytics.progression02 = progression02;
+    GameAnalytics.progression03 = progression03;
+#else
+    GameAnalytics.progression02 = (progression02 != null) ? progression02 : 'empty';
+    GameAnalytics.progression03 = (progression03 != null) ? progression03 : 'empty';
+#end
 
-  public static function sendProgressionEventWithThreeProgressions(status:Int, progression01:String, progression02:String, progression03:String, score:Int)
-  {
-  GameAnalytics.status = status;
-  GameAnalytics.progression01 = progression01;
-  GameAnalytics.progression02 = progression02;
-  GameAnalytics.progression03 = progression03;
-  GameAnalytics.score = score;
-  progressionEvent();
+    GameAnalytics.score = score;
+    progressionEvent();
   }
 
   private static function progressionEvent()
@@ -621,6 +627,10 @@ class GameAnalytics {
   addProgressionEventGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "addProgressionEvent", "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V", true);
   var args:Array<Dynamic> = [status, progression01, progression02, progression03, score];
   addProgressionEventGA(args);
+  #end
+  #if(html5)
+    trace("addProgressionEvent", status, progression01, progression02, progression03, score);
+    GameAnalyticsJS.GameAnalytics("addProgressionEvent",status, progression01, progression02, progression03, score);
   #end
   }
 

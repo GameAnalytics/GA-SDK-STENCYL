@@ -18,6 +18,18 @@ If you have any issues or feedback regarding the SDK, please contact our friendl
 >   
 > **iOS:**   
 > The SDK build size in a native iOS app is only around **242Kb** (armv7) / **259Kb** (armv8).
+>   
+> **JAVASCRIPT:**   
+> The SDK Use GameAnalytics Javascript
+>   
+>   Add this code 
+
+	<!-- GameAnalytics -->
+	<script>
+		window.GameAnalytics=window.GameAnalytics||function(){(GameAnalytics.q=GameAnalytics.q||[]).push(arguments)};
+	</script>
+	<script async src='http://download.gameanalytics.com/js/GameAnalytics-3.1.2.min.js'></script>
+	<!-- End GameAnalytics -->
 
 Changelog
 ---------
