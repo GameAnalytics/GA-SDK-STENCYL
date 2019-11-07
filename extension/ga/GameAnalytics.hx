@@ -11,7 +11,6 @@ package extension.ga;
         #end
 #end
 
-
 #if openfl_legacy
 import openfl.utils.JNI;
 #else
@@ -35,7 +34,7 @@ class GameAnalytics {
   private static var build:String;
   private static var enableVerboseB:Bool;
   private static var enableInfoB:Bool;
-  private static var gender:String;
+  private static var gender:GAGender;
   private static var birthYear:Int;
 
   //Custom dimensions
@@ -63,7 +62,7 @@ class GameAnalytics {
   //resource
   private static var currencies:String; //configured before initialisation
   private static var itemTypes:String; //configured before initialisation
-  private static var flowType:Int;
+  private static var flowType:GAFlowType;
   //progression
   private static var progression01:String;
   private static var progression02:String;
@@ -71,7 +70,7 @@ class GameAnalytics {
   private static var status:Int;
   private static var score:Int;
   //error
-  private static var severity:Int;
+  private static var severity:GAErrorSeverity;
   private static var message:String;
   //CC
   private static var ready:Bool = false;
@@ -241,7 +240,7 @@ class GameAnalytics {
     }
     #end
     #if(html5)
-    GameAnalyticsJS.GameAnalytics("enableVerbose",enableVerboseB);
+    GameAnalyticsJS.GameAnalytics("setEnabledInfoLog",enableVerboseB);
     #end
   }
 
@@ -253,67 +252,58 @@ class GameAnalytics {
 
   private static function enableInfoLog()
   {
-  #if(cpp && mobile && !android)
-  enableInfoGA(enableInfoB);
-  #end
-  #if android
-  enableInfoGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "enableInfoLog", "(Ljava/lang/String;)V", true);
-  if(enableInfoB)
-  {
-  enableInfoGA(["true"]);
-  }
-  else
-  {
-  enableInfoGA(["false"]);
-  }
-  #end
-  #if(html5)
-  GameAnalyticsJS.GameAnalytics("enableInfo",enableInfoB);
-  #end
+    #if(cpp && mobile && !android)
+    enableInfoGA(enableInfoB);
+    #end
+    #if android
+    enableInfoGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "enableInfoLog", "(Ljava/lang/String;)V", true);
+    if(enableInfoB)
+    {
+    enableInfoGA(["true"]);
+    }
+    else
+    {
+    enableInfoGA(["false"]);
+    }
+    #end
+    #if(html5)
+    GameAnalyticsJS.GameAnalytics("setEnabledInfoLog",enableInfoB);
+    #end
   }
 
   public static function configureUserId(user_id:String)
   {
-  GameAnalytics.user_id = user_id;
-  configUserId();
+    GameAnalytics.user_id = user_id;
+    configUserId();
   }
 
   private static function configUserId()
   {
-  #if(cpp && mobile && !android)
-  configureUserIdGA(user_id);
-  #end
-  #if android
-  configureUserIdGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "configUserId", "(Ljava/lang/String;)V", true);
-  configureUserIdGA([user_id]);
-  #end
+    #if(cpp && mobile && !android)
+    configureUserIdGA(user_id);
+    #end
+    #if android
+    configureUserIdGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "configUserId", "(Ljava/lang/String;)V", true);
+    configureUserIdGA([user_id]);
+    #end
+    #if(html5)
+    GameAnalyticsJS.GameAnalytics("configureUserId",user_id);
+    #end
   }
 
-  public static function configureiOS(build:String)
+  private static function configBuild(build:String)
   {
     GameAnalytics.build = build;
-    configBuildiOS();
-  }
-
-  public static function configureAndroid(build:String)
-  {
-    GameAnalytics.build = build;
-    configBuildAndroid();
-  }
-
-  private static function configBuildiOS()
-  {
-  #if(cpp && mobile && !android)
-  configureBuildGA(build);
-  #end
-  }
-
-  private static function configBuildAndroid()
-  {
-  #if android
-  configureBuildGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "configureBuild", "(Ljava/lang/String;)V", true);
-  configureBuildGA([build]);
-  #end
+    #if(cpp && mobile && !android)
+    configureBuildGA(build);
+    #end
+    #if android
+    configureBuildGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "configureBuild", "(Ljava/lang/String;)V", true);
+    configureBuildGA([build]);
+    #end
+    #if(html5)
+      GameAnalyticsJS.GameAnalytics("configureBuild",build);
+    #end
   }
 
   public static function configureAvailableResourceCurrencies(_currencies:String)
@@ -324,13 +314,17 @@ class GameAnalytics {
 
   private static function availableResourceCurrencies()
   {
-  #if(cpp && mobile && !android)
-  configureAvailableResourceCurrenciesGA(currencies);
-  #end
-  #if android
-  configureAvailableResourceCurrenciesGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "configureAvailableResourceCurrencies", "(Ljava/lang/String;)V", true);
-  configureAvailableResourceCurrenciesGA([currencies]);
-  #end
+    #if(cpp && mobile && !android)
+    configureAvailableResourceCurrenciesGA(currencies);
+    #end
+    #if android
+    configureAvailableResourceCurrenciesGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "configureAvailableResourceCurrencies", "(Ljava/lang/String;)V", true);
+    configureAvailableResourceCurrenciesGA([currencies]);
+    #end
+    #if(html5)
+      var data:Array<String> = currencies.split(',');
+      GameAnalyticsJS.GameAnalytics("configureAvailableResourceCurrencies", data);
+    #end
   }
 
   public static function configureAvailableResourceItemTypes(_itemTypes:String)
@@ -347,6 +341,10 @@ class GameAnalytics {
   #if android
   configureAvailableResourceItemTypesGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "configureAvailableResourceItemTypes", "(Ljava/lang/String;)V", true);
   configureAvailableResourceItemTypesGA([itemTypes]);
+  #end
+  #if(html5)
+    var data:Array<String> = itemTypes.split(',');
+    GameAnalyticsJS.GameAnalytics("configureAvailableResourceItemTypes", data);
   #end
   }
 
@@ -365,6 +363,10 @@ class GameAnalytics {
   configureAvailableCustomDimensions01GA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "configureAvailableCustomDimensions01", "(Ljava/lang/String;)V", true);
   configureAvailableCustomDimensions01GA([customDimensions01]);
   #end
+  #if(html5)
+    var data:Array<String> = itemTypes.split(',');
+    GameAnalyticsJS.GameAnalytics("configureAvailableCustomDimensions01", data);
+  #end
   }
 
   public static function configureAvailableCustomDimensions02(customDim:String)
@@ -375,13 +377,17 @@ class GameAnalytics {
 
   private static function availableCustomDimensions02()
   {
-  #if(cpp && mobile && !android)
-  configureAvailableCustomDimensions02GA(customDimensions02);
-  #end
-  #if android
-  configureAvailableCustomDimensions02GA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "configureAvailableCustomDimensions02", "(Ljava/lang/String;)V", true);
-  configureAvailableCustomDimensions02GA([customDimensions02]);
-  #end
+    #if(cpp && mobile && !android)
+    configureAvailableCustomDimensions02GA(customDimensions02);
+    #end
+    #if android
+    configureAvailableCustomDimensions02GA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "configureAvailableCustomDimensions02", "(Ljava/lang/String;)V", true);
+    configureAvailableCustomDimensions02GA([customDimensions02]);
+    #end
+    #if(html5)
+      var data:Array<String> = itemTypes.split(',');
+      GameAnalyticsJS.GameAnalytics("configureAvailableCustomDimensions02", data);
+    #end
   }
 
   public static function configureAvailableCustomDimensions03(customDim:String)
@@ -392,13 +398,17 @@ class GameAnalytics {
 
   private static function availableCustomDimensions03()
   {
-  #if(cpp && mobile && !android)
-  configureAvailableCustomDimensions03GA(customDimensions03);
-  #end
-  #if android
-  configureAvailableCustomDimensions03GA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "configureAvailableCustomDimensions03", "(Ljava/lang/String;)V", true);
-  configureAvailableCustomDimensions03GA([customDimensions03]);
-  #end
+    #if(cpp && mobile && !android)
+    configureAvailableCustomDimensions03GA(customDimensions03);
+    #end
+    #if android
+    configureAvailableCustomDimensions03GA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "configureAvailableCustomDimensions03", "(Ljava/lang/String;)V", true);
+    configureAvailableCustomDimensions03GA([customDimensions03]);
+    #end
+    #if(html5)
+      var data:Array<String> = itemTypes.split(',');
+      GameAnalyticsJS.GameAnalytics("configureAvailableCustomDimensions03", data);
+    #end
   }
 
   public static function setCustomDimension01(customDim:String)
@@ -409,13 +419,16 @@ class GameAnalytics {
 
   private static function setCustomDim01()
   {
-  #if(cpp && mobile && !android)
-  setCustomDimension01GA(customDimension);
-  #end
-  #if android
-  setCustomDimension01GA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "setCustomDimension01", "(Ljava/lang/String;)V", true);
-  setCustomDimension01GA([customDimension]);
-  #end
+    #if(cpp && mobile && !android)
+    setCustomDimension01GA(customDimension);
+    #end
+    #if android
+    setCustomDimension01GA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "setCustomDimension01", "(Ljava/lang/String;)V", true);
+    setCustomDimension01GA([customDimension]);
+    #end
+    #if(html5)
+      GameAnalyticsJS.GameAnalytics("setCustomDimension01", customDimension);
+    #end
   }
 
   public static function setCustomDimension02(customDim:String)
@@ -426,13 +439,16 @@ class GameAnalytics {
 
   private static function setCustomDim02()
   {
-  #if(cpp && mobile && !android)
-  setCustomDimension02GA(customDimension);
-  #end
-  #if android
-  setCustomDimension02GA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "setCustomDimension02", "(Ljava/lang/String;)V", true);
-  setCustomDimension02GA([customDimension]);
-  #end
+    #if(cpp && mobile && !android)
+    setCustomDimension02GA(customDimension);
+    #end
+    #if android
+    setCustomDimension02GA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "setCustomDimension02", "(Ljava/lang/String;)V", true);
+    setCustomDimension02GA([customDimension]);
+    #end
+    #if(html5)
+      GameAnalyticsJS.GameAnalytics("setCustomDimension02", customDimension);
+    #end
   }
 
   public static function setCustomDimension03(customDim:String)
@@ -450,72 +466,76 @@ class GameAnalytics {
   setCustomDimension03GA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "setCustomDimension03", "(Ljava/lang/String;)V", true);
   setCustomDimension03GA([customDimension]);
   #end
+  #if(html5)
+    GameAnalyticsJS.GameAnalytics("setCustomDimension03", customDimension);
+  #end
   }
 
-  public static function setGender(gender:String)
+  public static function setGender(gender:GAGender)
   {
-  GameAnalytics.gender = gender;
-  genderGA();
+    GameAnalytics.gender = gender;
+    genderGA();
   }
 
   private static function genderGA()
   {
   #if(cpp && mobile && !android)
-  setGenderGA(gender);
+    var gstr = GADef.genderToString(gender);
+    setGenderGA(gstr);
   #end
   #if android
-  setGenderGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "setGender", "(I)V", true);
-  if(gender == "male")
-  {
-  setGenderGA([1]);
-  }
-  else if(gender == "female")
-  {
-  setGenderGA([2]);
-  }
-  else
-  {
-  setGenderGA([0]);
-  }
+    setGenderGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "setGender", "(I)V", true);
+    var g:Int = cast gender;
+    setGenderGA([g]);
+  #end
+  #if(html5)
+    var gstr = GADef.genderToString(gender);
+    GameAnalyticsJS.GameAnalytics("setGender", gstr);
   #end
   }
 
   public static function setBirthYear(birthYear:Int)
   {
-  GameAnalytics.birthYear = birthYear;
-  birthYearGA();
+    GameAnalytics.birthYear = birthYear;
+    birthYearGA();
   }
 
   private static function birthYearGA()
   {
-  #if(cpp && mobile && !android)
-  setBirthYearGA(birthYear);
-  #end
-  #if android
-  setBirthYearGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "setBirthYear", "(I)V", true);
-  setBirthYearGA([birthYear]);
-  #end
+    #if(cpp && mobile && !android)
+    setBirthYearGA(birthYear);
+    #end
+    #if android
+    setBirthYearGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "setBirthYear", "(I)V", true);
+    setBirthYearGA([birthYear]);
+    #end
+    #if(html5)
+      GameAnalyticsJS.GameAnalytics("setBirthYear", birthYear);
+    #end
   }
 
   //events
   public static function sendDesignEvent(eventId:String)
   {
-  GameAnalytics.designEventId = eventId;
-  designEvent();
+    GameAnalytics.designEventId = eventId;
+    designEvent();
   }
 
   private static function designEvent()
   {
-  #if(cpp && mobile && !android)
-  addDesignEventGA(designEventId);
-  #end
-  #if android
-  if(addDesignEventGA == null)
-  {
-  addDesignEventGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "addDesignEventWithEventId", "(Ljava/lang/String;)V", true);
-  }
-  addDesignEventGA([designEventId]);
-  #end
+    #if(cpp && mobile && !android)
+    addDesignEventGA(designEventId);
+    #end
+    #if android
+    if(addDesignEventGA == null)
+    {
+    addDesignEventGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "addDesignEventWithEventId", "(Ljava/lang/String;)V", true);
+    }
+    addDesignEventGA([designEventId]);
+    #end
+    #if(html5)
+      GameAnalyticsJS.GameAnalytics("addDesignEvent", designEventId);
+    #end
   }
 
   public static function sendDesignEventWithAmount(eventId:String, amount:Float)
@@ -538,6 +558,9 @@ class GameAnalytics {
   var args:Array<Dynamic> = [designEventId, amount];
   addDesignEventWithAmountGA(args);
   #end
+    #if(html5)
+      GameAnalyticsJS.GameAnalytics("addDesignEvent", designEventId, amount);
+    #end
   }
 
   public static function sendBusinessEventIOS(currency:String, amountInCents:Int, itemType:String, itemId:String, cartType:String, receipt:String)
@@ -577,28 +600,37 @@ class GameAnalytics {
   var args:Array<Dynamic> = [currency, amountInCents, itemType, itemId, cartType, receipt, signature];
   addBusinessEventGA(args);
   #end
+    #if(html5)
+      GameAnalyticsJS.GameAnalytics("addBusinessEvent", amountInCents, currency, amount, itemType, itemId, cartType);
+    #end
   }
 
-  public static function sendResourceEvent(flowType:Int, currency:String, amount:Int, itemType:String, itemId:String)
+  public static function sendResourceEvent(flowType:GAFlowType, currency:String, amount:Int, itemType:String, itemId:String)
   {
-  GameAnalytics.flowType = flowType;
-  GameAnalytics.currency = currency;
-  GameAnalytics.amount = amount;
-  GameAnalytics.itemType = itemType;
-  GameAnalytics.itemId = itemId;
-  resourceEvent();
+    GameAnalytics.flowType = flowType;
+    GameAnalytics.currency = currency;
+    GameAnalytics.amount = amount;
+    GameAnalytics.itemType = itemType;
+    GameAnalytics.itemId = itemId;
+    resourceEvent();
   }
 
   private static function resourceEvent()
   {
-  #if(cpp && mobile && !android)
-  addResourceEventGA(flowType, currency, amount, itemType, itemId);
-  #end
-  #if android
-  addResourceEventGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "addResourceEvent", "(ILjava/lang/String;FLjava/lang/String;Ljava/lang/String;)V", true);
-  var args:Array<Dynamic> = [flowType, currency, amount, itemType, itemId];
-  addResourceEventGA(args);
-  #end
+    #if(cpp && mobile && !android)
+    var ft:Int = cast flowType;
+    addResourceEventGA(ft, currency, amount, itemType, itemId);
+    #end
+    #if android
+    addResourceEventGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "addResourceEvent", "(ILjava/lang/String;FLjava/lang/String;Ljava/lang/String;)V", true);
+    var args:Array<Dynamic> = [flowType, currency, amount, itemType, itemId];
+    addResourceEventGA(args);
+    #end
+    #if(html5)
+      // get flow string
+      var flow:String = GADef.flowToString(flowType);
+      GameAnalyticsJS.GameAnalytics("addResourceEvent", flow, currency, itemType, itemId);
+    #end
   }
 
   public static function sendProgressionEvent(status:GAProgression, progression01:String, ?progression02:String, ?progression03:String, score:Int=0)
@@ -620,194 +652,223 @@ class GameAnalytics {
 
   private static function progressionEvent()
   {
-  #if(cpp && mobile && !android)
-  addProgressionEventGA(status, progression01, progression02, progression03, score);
-  #end
-  #if android
-  addProgressionEventGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "addProgressionEvent", "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V", true);
-  var args:Array<Dynamic> = [status, progression01, progression02, progression03, score];
-  addProgressionEventGA(args);
-  #end
-  #if(html5)
-    trace("addProgressionEvent", status, progression01, progression02, progression03, score);
-    GameAnalyticsJS.GameAnalytics("addProgressionEvent",status, progression01, progression02, progression03, score);
-  #end
-  }
+    #if(cpp && mobile && !android)
+    addProgressionEventGA(status, progression01, progression02, progression03, score);
+    #end
+    #if android
+    addProgressionEventGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "addProgressionEvent", "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V", true);
+    var args:Array<Dynamic> = [status, progression01, progression02, progression03, score];
+    addProgressionEventGA(args);
+    #end
+    #if(html5)
+      trace("addProgressionEvent", status, progression01, progression02, progression03, score);
+      GameAnalyticsJS.GameAnalytics("addProgressionEvent",status, progression01, progression02, progression03, score);
+    #end
+    }
 
-  public static function sendErrorEvent(severity:Int, message:String)
+  public static function sendErrorEvent(severity:GAErrorSeverity, message:String)
   {
-  GameAnalytics.severity = severity;
-  GameAnalytics.message = message;
-  errorEvent();
+    GameAnalytics.severity = severity;
+    GameAnalytics.message = message;
+    errorEvent();
   }
 
   private static function errorEvent()
   {
-  #if(cpp && mobile && !android)
-  addErrorEventGA(severity, message);
-  #end
-  #if android
-  addErrorEventGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "addErrorEventWithSeverity", "(ILjava/lang/String;)V", true);
-  var args:Array<Dynamic> = [severity, message];
-  addErrorEventGA(args);
-  #end
+    #if(cpp && mobile && !android)
+      var sev:Int = cast severity;
+      addErrorEventGA(sev, message);
+    #end
+    #if android
+      var sev:Int = cast severity;
+      addErrorEventGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "addErrorEventWithSeverity", "(ILjava/lang/String;)V", true);
+      var args:Array<Dynamic> = [sev, message];
+      addErrorEventGA(args);
+    #end
+    #if(html5)
+      var sev:String = GADef.errorToString(severity);
+      GameAnalyticsJS.GameAnalytics("addErrorEvent", sev, message);
+    #end
   }
 
   // SDK state
   private static function configureSdkVersion()
   {
-  var _version:String = "stencyl " + sdk_version;
-  #if(cpp && mobile && !android)
-  configureSdkVersionGA(_version);
-  #end
-  #if android
-  configureSdkVersionGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "configureSdkGameEngineVersion", "(Ljava/lang/String;)V", true);
-  configureSdkVersionGA([_version]);
-  #end
+    var _version:String = "stencyl " + sdk_version;
+    #if(cpp && mobile && !android)
+    configureSdkVersionGA(_version);
+    #end
+    #if android
+    configureSdkVersionGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "configureSdkGameEngineVersion", "(Ljava/lang/String;)V", true);
+    configureSdkVersionGA([_version]);
+    #end
+    #if(html5)
+      GameAnalyticsJS.GameAnalytics("configureSdkGameEngineVersion", _version);
+    #end
   }
 
   private static function configureEngineVersion()
   {
-  var engineVersion:String;
+    var engineVersion:String;
 
-  #if(openfl >= "4.0.0")
-  engineVersion = "stencyl 3.5.0";
-  #elseif ((openfl >= "3.3.8") && (openfl < "4.0.0"))
-  engineVersion = "stencyl 3.4.0";
-  #elseif ((openfl >= "3.3.2") && (openfl < "3.3.8"))
-  engineVersion = "stencyl 3.3.2";
-  #else
-  engineVersion = "stencyl 3.2.0";
-  #end
+    #if(openfl >= "4.0.0")
+    engineVersion = "stencyl 3.5.0";
+    #elseif ((openfl >= "3.3.8") && (openfl < "4.0.0"))
+    engineVersion = "stencyl 3.4.0";
+    #elseif ((openfl >= "3.3.2") && (openfl < "3.3.8"))
+    engineVersion = "stencyl 3.3.2";
+    #else
+    engineVersion = "stencyl 3.2.0";
+    #end
 
-  #if(cpp && mobile && !android)
-  configureEngineVersionGA(engineVersion);
-  #end
-  #if android
-  configureEngineVersionGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "configureGameEngineVersion", "(Ljava/lang/String;)V", true);
-  configureEngineVersionGA([engineVersion]);
-  #end
+    #if(cpp && mobile && !android)
+    configureEngineVersionGA(engineVersion);
+    #end
+    #if android
+    configureEngineVersionGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "configureGameEngineVersion", "(Ljava/lang/String;)V", true);
+    configureEngineVersionGA([engineVersion]);
+    #end
+    #if(html5)
+      GameAnalyticsJS.GameAnalytics("configureGameEngineVersion", engineVersion);
+    #end
   }
 
   //Manual session handling
   public static function setEnableManualSessionHandling()
   {
-  #if(cpp && mobile && !android)
-  setEnabledManualSessionHandlingGA();
-  #end
-  #if android
-  setEnabledManualSessionHandlingGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "enableManualSessionHandling", "()V", true);
-  setEnabledManualSessionHandlingGA();
-  #end
+    #if(cpp && mobile && !android)
+      setEnabledManualSessionHandlingGA();
+    #end
+    #if android
+      setEnabledManualSessionHandlingGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "enableManualSessionHandling", "()V", true);
+      setEnabledManualSessionHandlingGA();
+    #end
+    #if(html5)
+      GameAnalyticsJS.GameAnalytics("setEnabledManualSessionHandling", true);
+    #end
   }
 
   public static function startSession()
   {
-  #if(cpp && mobile && !android)
-  startSessionGA();
-  #end
-  #if android
-  startSessionGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "enableManualSessionHandling", "()V", true);
-  startSessionGA();
-  #end
+    #if(cpp && mobile && !android)
+      startSessionGA();
+    #end
+    #if android
+    startSessionGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "enableManualSessionHandling", "()V", true);
+      startSessionGA();
+    #end
+    #if(html5)
+      GameAnalyticsJS.GameAnalytics("startSession");
+    #end
   }
 
   public static function endSession()
   {
-  #if(cpp && mobile && !android)
-  endSessionGA();
-  #end
-  #if android
-  endSessionGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "startSession", "()V", true);
-  endSessionGA();
-  #end
+    #if(cpp && mobile && !android)
+      endSessionGA();
+    #end
+    #if android
+      endSessionGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "startSession", "()V", true);
+      endSessionGA();
+    #end
+    #if(html5)
+      GameAnalyticsJS.GameAnalytics("endSession");
+    #end
   }
 
   //Command Centre
   public static function isCommandCenterReady()
   {
-  #if(cpp && mobile && !android)
-  ready = isCommandCenterReadyGA();
-  #end
-  #if android
-  if(isCommandCenterReadyGA == null)
-  {
-  isCommandCenterReadyGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "isCommandCenterReady", "()V");
-  getIsCommandCenterReadyGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "getIsCommandCenterReady", "()Z");
-  }
-  isCommandCenterReadyGA();
-  Sys.sleep(.05); // threads are parallel and we need to wait for UI thread in Android to finish the check
-  ready = getIsCommandCenterReadyGA();
-  #end
-  return ready;
+    #if(cpp && mobile && !android)
+      ready = isCommandCenterReadyGA();
+    #end
+    #if android
+      if(isCommandCenterReadyGA == null)
+      {
+      isCommandCenterReadyGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "isCommandCenterReady", "()V");
+      getIsCommandCenterReadyGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics", "getIsCommandCenterReady", "()Z");
+      }
+      isCommandCenterReadyGA();
+      Sys.sleep(.05); // threads are parallel and we need to wait for UI thread in Android to finish the check
+      ready = getIsCommandCenterReadyGA();
+    #end
+    #if(html5)
+      ready = GameAnalyticsJS.GameAnalytics("isCommandCenterReady");
+    #end
+    return ready;
   }
 
   public static function getCommandCenterValueAsString(_key:String)
   {
-  GameAnalytics.configKey = _key;
-  configValue = _getCommandCenterValueAsString();
-  return configValue;
+    GameAnalytics.configKey = _key;
+    configValue = _getCommandCenterValueAsString();
+    return configValue;
   }
 
   private static function _getCommandCenterValueAsString()
   {
-  var ret:String = "";
-  #if(cpp && mobile && !android)
-  ret = getCommandCenterValueAsStringGA(GameAnalytics.configKey);
-  #end
-  #if android
-  if(getCommandCenterValueAsStringGA == null)
-  {
-  getCommandCenterValueAsStringGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics","getCommandCenterValueAsString","(Ljava/lang/String;)V");
-  }
-  if(getFetchedConfigValueGA == null)
-  {
-  getFetchedConfigValueGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics","getFetchedConfigValue","()Ljava/lang/String;");
-  }
-  getCommandCenterValueAsStringGA(GameAnalytics.configKey);
-  Sys.sleep(.05); // threads are parallel and we need to wait for UI thread in Android to finish loading the config value
-  ret = getFetchedConfigValueGA();
-  trace(ret);
-  #end
-  return ret;
+    var ret:String = "";
+    #if(cpp && mobile && !android)
+      ret = getCommandCenterValueAsStringGA(GameAnalytics.configKey);
+    #end
+    #if android
+      if(getCommandCenterValueAsStringGA == null)
+      {
+      getCommandCenterValueAsStringGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics","getCommandCenterValueAsString","(Ljava/lang/String;)V");
+      }
+      if(getFetchedConfigValueGA == null)
+      {
+      getFetchedConfigValueGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics","getFetchedConfigValue","()Ljava/lang/String;");
+      }
+      getCommandCenterValueAsStringGA(GameAnalytics.configKey);
+      Sys.sleep(.05); // threads are parallel and we need to wait for UI thread in Android to finish loading the config value
+      ret = getFetchedConfigValueGA();
+      trace(ret);
+    #end
+    #if(html5)
+      ready = GameAnalyticsJS.GameAnalytics("getCommandCenterValueAsString", GameAnalytics.configKey);
+    #end
+    return ret;
   }
 
   public static function getCommandCenterValueAsStringWithDefVal(_key:String, _defaultValue:String)
   {
-  GameAnalytics.configKey = _key;
-  GameAnalytics.configDefaultValue = _defaultValue;
-  configValue = _getCommandCenterValueAsStringWithDefVal();
-  return configValue;
+    GameAnalytics.configKey = _key;
+    GameAnalytics.configDefaultValue = _defaultValue;
+    configValue = _getCommandCenterValueAsStringWithDefVal();
+    return configValue;
   }
 
   private static function _getCommandCenterValueAsStringWithDefVal()
   {
-  var ret:String = "";
-  #if(cpp && mobile && !android)
-  ret = getCommandCenterValueAsStringWithDefValGA(GameAnalytics.configKey,GameAnalytics.configDefaultValue);
-  #end
-  #if android
-  if(getCommandCenterValueAsStringWithDefValGA == null)
-  {
-  getCommandCenterValueAsStringWithDefValGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics","getCommandCenterValueAsStringWithDefVal","(Ljava/lang/String;Ljava/lang/String;)V");
+    var ret:String = "";
+    #if(cpp && mobile && !android)
+    ret = getCommandCenterValueAsStringWithDefValGA(GameAnalytics.configKey,GameAnalytics.configDefaultValue);
+    #end
+    #if android
+    if(getCommandCenterValueAsStringWithDefValGA == null)
+    {
+    getCommandCenterValueAsStringWithDefValGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics","getCommandCenterValueAsStringWithDefVal","(Ljava/lang/String;Ljava/lang/String;)V");
+    }
+    if(getFetchedConfigValueGA == null)
+    {
+    getFetchedConfigValueGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics","getFetchedConfigValue","()Ljava/lang/String;");
+    }
+    getCommandCenterValueAsStringWithDefValGA(GameAnalytics.configKey, GameAnalytics.configDefaultValue);
+    Sys.sleep(.05); // threads are parallel and we need to wait for UI thread in Android to finish loading the config value
+    ret = getFetchedConfigValueGA();
+    #end
+    #if(html5)
+      ready = cast GameAnalyticsJS.GameAnalytics("getCommandCenterValueAsString", GameAnalytics.configKey, GameAnalytics.configDefaultValue);
+    #end
+    return ret;
   }
-  if(getFetchedConfigValueGA == null)
-  {
-  getFetchedConfigValueGA = JNI.createStaticMethod("com/gameanalytics/MyGameAnalytics","getFetchedConfigValue","()Ljava/lang/String;");
-  }
-  getCommandCenterValueAsStringWithDefValGA(GameAnalytics.configKey, GameAnalytics.configDefaultValue);
-  Sys.sleep(.05); // threads are parallel and we need to wait for UI thread in Android to finish loading the config value
-  ret = getFetchedConfigValueGA();
-  #end
-  return ret;
-  }
-
 
   //Utility
   private static function printMessage(message:String)
   {
-  #if(cpp && mobile && !android)
-  printGA(message);
-  #end
+    #if(cpp && mobile && !android)
+      printGA(message);
+    #end
   }
 }
