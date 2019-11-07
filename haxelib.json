@@ -8,8 +8,7 @@
   "releasenote": "Developement. Use only",
   "contributors": ["unazona","vincent-schirmann"],
   "dependencies": {
-    "openfl": "8.6.3",
-    "lime": "7.6.3"
+    "openfl": "",
+    "lime": ""
   }
-
 }
