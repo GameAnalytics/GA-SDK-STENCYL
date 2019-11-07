@@ -5,8 +5,8 @@
   "tags": ["openfl", "analytics", "gameanalytics", "ga"],
   "description": "This library is forked from Game analytics Stencyl SDK and added JS SDK.",
   "version": "0.5.0",
-  "releasenote": "Developement. Use only",
-  "contributors": ["unazona","vincent-schirmann"],
+  "releasenote": "Developement. Tested against ios, android & javascript targets",
+  "contributors": ["unazona","vincent"],
   "dependencies": {
     "openfl": "",
     "lime": ""
