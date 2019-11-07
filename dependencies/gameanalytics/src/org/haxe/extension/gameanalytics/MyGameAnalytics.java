@@ -1,4 +1,4 @@
-package com.gameanalytics;
+package org.haxe.extension.gameanalytics;
 
 import com.gameanalytics.sdk.*;
 
