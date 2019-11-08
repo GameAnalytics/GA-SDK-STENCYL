@@ -1,0 +1,14 @@
+{
+  "name": "extension-ga",
+  "url" : "https://github.com/narenjo/GA-SDK-STENCYL/",
+  "license": "MIT",
+  "tags": ["openfl", "analytics", "gameanalytics", "ga"],
+  "description": "This library is forked from Game analytics Stencyl SDK and added JS SDK.",
+  "version": "0.5.0",
+  "releasenote": "Developement. Tested against ios, android & javascript targets",
+  "contributors": ["unazona","vincent"],
+  "dependencies": {
+    "openfl": "",
+    "lime": ""
+  }
+}
