@@ -25,7 +25,7 @@ import extension.ga.GADef;
 
 class GameAnalytics {
   //versioning
-  private static inline var sdk_version:String = "2.1.0"; //GameAnalytics SDK version
+  private static inline var sdk_version:String = "3.0.1"; //GameAnalytics SDK version
 
   //Settings cache
   private static var gameKey:String;
@@ -214,8 +214,8 @@ class GameAnalytics {
         GameAnalyticsJS.GameAnalytics("initialize",
             "1f50637264c54a0bd15a11ba2beaf9d9",
             "fedfbf1bf8bfac55d4d86d1ede81f84c91901a5f");
-    #end    
-  } 
+    #end
+  }
 
   public static function enableVerbose(enableVerboseB:Bool)
   {

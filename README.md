@@ -29,7 +29,7 @@ If you have any issues or feedback regarding the SDK, please contact our friendl
 > SDK V3.1.2
 > Use of GameAnalytics Javascript
 >   
->   Add this code to your HTML template 
+>   Add this code to your HTML template
 
 	<!-- GameAnalytics -->
 	<script>
@@ -41,6 +41,9 @@ If you have any issues or feedback regarding the SDK, please contact our friendl
 Changelog
 ---------
 <!--(CHANGELOG_TOP)-->
+**3.0.1**
+* added missing blocks.xml
+
 **3.0.0**
 * Forked of GA Stencyl
 * Adpatation of SDK to Haxelib
